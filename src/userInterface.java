@@ -2,10 +2,12 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 public class userInterface extends JFrame {
-    readJsonFile read;
+    public readJsonFile read;
     userInterface(){
         super("Yugi");
         read = new readJsonFile();
@@ -21,6 +23,13 @@ public class userInterface extends JFrame {
     JPanel buttonPanel(){
         JPanel panel = new JPanel(new GridLayout(5,1));
         JButton addItems = new JButton("+");
+        addItems.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                userChild child = new userChild(read);
+
+            }
+        });
         JButton removeItems = new JButton("-");
         JButton updateData = new JButton("Update");
         JButton checkPrice = new JButton("Check Price");
@@ -34,11 +43,11 @@ public class userInterface extends JFrame {
     }
     JPanel tablePanel(){
         JPanel panel = new JPanel();
-        TableModel model = new TableModel();
-        JTable table = new JTable();
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setModel(model);
-        panel.add(scrollPane, BorderLayout.WEST);
+//        TableModel model = new TableModel();
+//        JTable table = new JTable();
+//        JScrollPane scrollPane = new JScrollPane(table);
+//        table.setModel(model);
+//        panel.add(scrollPane, BorderLayout.WEST);
 
 
         return panel;

@@ -23,8 +23,9 @@ public class readJsonFile {
                 List<String> list = new ArrayList<>();
                 Iterator<String> iterator = array.iterator();
                 while (iterator.hasNext()){
-                    cardList.add(new YugiohCardDetails(name, desc, iterator.next()));
+                    list.add( iterator.next());
                 }
+                cardList.add(new YugiohCardDetails(name, desc, list));
             }
 
         }catch (Exception e){

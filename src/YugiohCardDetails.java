@@ -1,9 +1,10 @@
 import java.util.List;
 
 public class YugiohCardDetails {
-    String name, desc, rarity;
+    String name, desc;
+    List<String> rarity;
 
-    YugiohCardDetails(String name, String desc, String rarity){
+    YugiohCardDetails(String name, String desc, List<String> rarity){
         this.name = name;
         this.desc = desc;
         this.rarity = rarity;
@@ -17,7 +18,7 @@ public class YugiohCardDetails {
         return desc;
     }
 
-    public String getRarity() {
+    public List<String> getRarity() {
         return rarity;
     }
 }
