@@ -1,24 +1,32 @@
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.List;
 
 public class userChild extends JDialog {
     readJsonFile file;
     namePanel name;
     rarityPanel rarity;
-    public userChild(readJsonFile file){
+    userInterface parent;
+    String[] textName;
+    namingPanel namePane;
+    public userChild(userInterface parent){
         setTitle("Add card");
-        name = new namePanel(file);
-        rarity = new rarityPanel(file, name);
-        setLayout(new GridLayout(3,1));
-        this.file = file;
-        name.setPanel(rarity.getModel());
-        add(searchPanel());
-        add(name.getPanel());
-        add(rarity.getPanel());
+        name = new namePanel(parent.getData());
+//        rarity = new rarityPanel(parent.getData(), name);
+        this.parent = parent;
+        initial();
+        namePane = new namingPanel(parent);
+//        setLayout(new GridLayout(3,1));
+//        name.setPanel(rarity.getModel());
+        add(searchPanel(), BorderLayout.NORTH);
+        add(name.getPanel(), BorderLayout.CENTER);
+        add(namePane.getPanel(), BorderLayout.SOUTH);
         setVisible(true);
         setSize(500,500);
 
@@ -26,118 +34,61 @@ public class userChild extends JDialog {
     JPanel searchPanel(){
         JPanel panel = new JPanel();
         JTextField bar = new JTextField(15);
-        JButton button = new JButton("Search");
-        panel.add(bar, BorderLayout.WEST);
-        panel.add(button, BorderLayout.EAST);
-        return panel;
-    }
-
-
-
-
-}
-
-class rarityPanel {
-    JPanel panel;
-    JTable table;
-    rarityModel model;
-    JScrollPane scrollPane;
-
-    rarityPanel(readJsonFile file, namePanel name) {
-        panel = new JPanel();
-        model = new rarityModel(file, name);
-        table = new JTable();
-        scrollPane = new JScrollPane(table);
-        table.setModel(model);
-        model.fireTableDataChanged();
-        panel.add(scrollPane);
-    }
-
-
-    public JPanel getPanel() {
-        return panel;
-    }
-
-    public rarityModel getModel() {
-        return model;
-    }
-
-    public JTable getTable() {
-        return table;
-    }
-}
-
-
-class rarityModel extends AbstractTableModel{
-    String[] column = {"Set", "Rarity", "Count"};
-    JTable list;
-    readJsonFile file;
-    namePanel name;
-    rarityModel(readJsonFile file, namePanel name){
-        this.file = file;
-        this.name = name;
-        list = name.getTable();
-    }
-
-    @Override
-    public int getRowCount() {
-        return file.getList().get(list.getSelectedRow()).getRarity().size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return column.length;
-    }
-
-    @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        List<String> details = file.getList().get(list.getSelectedRow()).getRarity();
-        switch (columnIndex){
-            case 0:
-                return details.get(rowIndex);
-        }
-        return null;
-    }
-
-    @Override
-    public String getColumnName(int num) {
-        return column[num];
-    }
-}
-
-class namePanel {
-    JPanel panel;
-    nameModel name;
-    JTable table;
-    JScrollPane scrollPane;
-    public namePanel(readJsonFile file){
-        panel = new JPanel();
-        name = new nameModel(file);
-        table = new JTable();
-        scrollPane = new JScrollPane(table);
-
-        table.setModel(name);
-        table.changeSelection(0,0, false, false);
-        scrollPane.setPreferredSize(new Dimension(250, 250));
-        panel.add(scrollPane);
-    }
-
-    public void setPanel(rarityModel tab) {
-        table.addMouseListener(new MouseAdapter() {
+        bar.addKeyListener(new KeyAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                tab.fireTableDataChanged();
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER){
+                    String text = bar.getText();
+                    filterModel((DefaultListModel<String>)namePane.getjList().getModel(), text);
+                }
             }
         });
-    }
+        JButton button = new JButton("Search");
 
-    JPanel getPanel(){
+        panel.add(bar, BorderLayout.WEST);
+        panel.add(button, BorderLayout.EAST);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = bar.getText();
+                filterModel((DefaultListModel<String>)namePane.getjList().getModel(), text);
+            }
+        });
         return panel;
     }
-    JTable getTable(){
-        return table;
+    public void filterModel(DefaultListModel<String> model, String filter) {
+        model.removeAllElements();
+        for (String s : textName) {
+            if (!s.toLowerCase().contains(filter)){
+                model.removeElement(s);
+            }
+            else{
+                if (!model.contains(s)){
+                    model.addElement(s);
+
+                }
+            }
+//            if (!s.toLowerCase().startsWith(filter)) {
+//                if (model.contains(s)) {
+//                    model.removeElement(s);
+//                }
+//            } else {
+//                if (!model.contains(s)) {
+//                    model.addElement(s);
+//                }
+//            }
+        }
     }
+    void initial(){
+        List<YugiohCardDetails> list = parent.getData().getList();
+        textName = new String[list.size()];
+        for (int i = 0; i < list.size(); i++){
+            textName[i] = list.get(i).getName();
+        }
+    }
+
 }
+
 
 class nameModel extends AbstractTableModel{
     String[] column = {"Name"};
@@ -167,3 +118,47 @@ class nameModel extends AbstractTableModel{
         return column[num];
     }
 }
+
+
+
+class namePanel {
+    JPanel panel;
+    nameModel name;
+    JTable table;
+    JScrollPane scrollPane;
+    TableRowSorter<nameModel> rowSorter;
+    public namePanel(readJsonFile file){
+        panel = new JPanel();
+        name = new nameModel(file);
+        table = new JTable(name);
+        scrollPane = new JScrollPane(table);
+        rowSorter = new TableRowSorter<nameModel>((nameModel) table.getModel());
+
+        table.changeSelection(0,0, false, false);
+//        scrollPane.setSize(250, 250);
+        scrollPane.setPreferredSize(new Dimension(250, 250));
+        table.setRowSorter(rowSorter);
+        panel.add(scrollPane);
+    }
+
+    public void setPanel(rarityModel tab) {
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                tab.fireTableDataChanged();
+            }
+        });
+    }
+
+    public TableRowSorter<nameModel> getRowSorter() {
+        return rowSorter;
+    }
+
+    JPanel getPanel(){
+        return panel;
+    }
+    JTable getTable(){
+        return table;
+    }
+}
+

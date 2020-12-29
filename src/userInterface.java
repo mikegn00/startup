@@ -8,9 +8,11 @@ import java.util.List;
 
 public class userInterface extends JFrame {
     public readJsonFile read;
+    userInterface parent;
     userInterface(){
         super("Yugi");
-        read = new readJsonFile();
+        this.read = new readJsonFile();
+        this.parent = this;
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch (Exception e){}
@@ -20,13 +22,19 @@ public class userInterface extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
+
+    readJsonFile getData(){
+        return read;
+    }
+
     JPanel buttonPanel(){
+
         JPanel panel = new JPanel(new GridLayout(5,1));
         JButton addItems = new JButton("+");
         addItems.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userChild child = new userChild(read);
+                userChild child = new userChild(parent);
 
             }
         });
@@ -52,6 +60,7 @@ public class userInterface extends JFrame {
 
         return panel;
     }
+
     class TableModel extends AbstractTableModel{
         String[] columns = {"Name", "Rarity", "Quantity"};
         List<YugiohCardDetails> list = read.getList();
