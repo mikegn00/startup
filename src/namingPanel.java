@@ -1,5 +1,9 @@
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class namingPanel {
@@ -25,10 +29,22 @@ public class namingPanel {
     public JList<String> getjList() {
         return jList;
     }
+
+
     JPanel getPanel(){
         JPanel panel = new JPanel();
         JScrollPane scrollPane = new JScrollPane(jList);
+        jList.setSelectedIndex(0);
         panel.add(scrollPane);
         return panel;
+    }
+
+    void updateTable(rarityModel table){
+        jList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                table.fireTableDataChanged();
+            }
+        });
     }
 }

@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.util.ArrayList;
 import java.util.List;
 
 public class rarityPanel {
@@ -7,10 +8,12 @@ public class rarityPanel {
     JTable table;
     rarityModel model;
     JScrollPane scrollPane;
+    userInterface parent;
 
-    rarityPanel(readJsonFile file, namePanel name) {
+    rarityPanel(userInterface parent, JList<String> list) {
+        this.parent = parent;
         panel = new JPanel();
-        model = new rarityModel(file, name);
+        model = new rarityModel(parent, list);
         table = new JTable();
         scrollPane = new JScrollPane(table);
         table.setModel(model);
@@ -34,20 +37,26 @@ public class rarityPanel {
 
 
 }
+
 class rarityModel extends AbstractTableModel {
     String[] column = {"Set", "Rarity", "Count"};
-    JTable list;
-    readJsonFile file;
+    JList<String> list;
+    userInterface parent;
     namePanel name;
-    rarityModel(readJsonFile file, namePanel name){
-        this.file = file;
-        this.name = name;
-        list = name.getTable();
+    rarityModel(userInterface parent, JList<String> list){
+        this.parent = parent;
+        this.list = list;
     }
 
     @Override
     public int getRowCount() {
-        return file.getList().get(list.getSelectedRow()).getRarity().size();
+        int size = 0;
+        for (YugiohCardDetails detail : parent.getData().getList()){
+            if (detail.getName().equals(list.getSelectedValue())){
+                size = parent.getData().getList().indexOf(detail);
+            }
+        }
+        return parent.getData().getList().get(size).getRarity().size();
     }
 
     @Override
@@ -57,10 +66,16 @@ class rarityModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        List<String> details = file.getList().get(list.getSelectedRow()).getRarity();
+        List<String> d = new ArrayList<>();
+        for (YugiohCardDetails detail : parent.getData().getList()){
+            if (detail.getName().equals(list.getSelectedValue())){
+                d = detail.getRarity();
+            }
+        }
+        List<String> details = parent.getData().getList().get(list.getSelectedIndex()).getRarity();
         switch (columnIndex){
             case 0:
-                String nameSet = details.get(rowIndex);
+                String nameSet = d.get(rowIndex);
                 for (int n = 0; n < nameSet.length(); n++){
                     if (nameSet.charAt(n) ==  '_'){
                         return nameSet.substring(0, n);
@@ -68,7 +83,7 @@ class rarityModel extends AbstractTableModel {
 
                 }
             case 1:
-                String nameRarity = details.get(rowIndex);
+                String nameRarity = d.get(rowIndex);
                 for (int n = 0; n < nameRarity.length(); n++){
                     if (nameRarity.charAt(n) == '_'){
                         return nameRarity.substring(n+1);

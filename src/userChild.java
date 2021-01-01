@@ -10,23 +10,26 @@ import java.util.List;
 
 public class userChild extends JDialog {
     readJsonFile file;
-    namePanel name;
+//    namePanel name;
     rarityPanel rarity;
     userInterface parent;
     String[] textName;
     namingPanel namePane;
     public userChild(userInterface parent){
         setTitle("Add card");
-        name = new namePanel(parent.getData());
-//        rarity = new rarityPanel(parent.getData(), name);
+//        name = new namePanel(parent.getData());
         this.parent = parent;
         initial();
+        setLayout(new BorderLayout());
         namePane = new namingPanel(parent);
+        rarity = new rarityPanel(parent, namePane.getjList());
+        namePane.updateTable(rarity.getModel());
 //        setLayout(new GridLayout(3,1));
 //        name.setPanel(rarity.getModel());
         add(searchPanel(), BorderLayout.NORTH);
-        add(name.getPanel(), BorderLayout.CENTER);
+//        add(name.getPanel(), BorderLayout.CENTER);
         add(namePane.getPanel(), BorderLayout.SOUTH);
+        add(rarity.getPanel(), BorderLayout.CENTER);
         setVisible(true);
         setSize(500,500);
 
