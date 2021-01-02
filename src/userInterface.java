@@ -4,20 +4,26 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class userInterface extends JFrame {
     public readJsonFile read;
     userInterface parent;
+    List<YugiohCardDetails> currentList;
+    TablePanel tablePanel;
+
     userInterface(){
         super("Yugi");
         this.read = new readJsonFile();
         this.parent = this;
+        this.tablePanel = new TablePanel();
+        this.currentList = new ArrayList<>();
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch (Exception e){}
         add(buttonPanel(), BorderLayout.EAST);
-        add(tablePanel(), BorderLayout.WEST);
+        add(tablePanel.getPanel(), BorderLayout.WEST);
         setSize(700, 500);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -49,53 +55,69 @@ public class userInterface extends JFrame {
         panel.add(saveCollection);
         return panel;
     }
-    JPanel tablePanel(){
-        JPanel panel = new JPanel();
-//        TableModel model = new TableModel();
-//        JTable table = new JTable();
-//        JScrollPane scrollPane = new JScrollPane(table);
-//        table.setModel(model);
-//        panel.add(scrollPane, BorderLayout.WEST);
 
 
-        return panel;
-    }
 
-    class TableModel extends AbstractTableModel{
-        String[] columns = {"Name", "Rarity", "Quantity"};
-        List<YugiohCardDetails> list = read.getList();
-
-
-        @Override
-        public int getRowCount() {
-            return list.size();
-        }
-
-        @Override
-        public int getColumnCount() {
-            return columns.length;
-        }
-
-        @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            YugiohCardDetails details = list.get(rowIndex);
-            switch (columnIndex){
-                case 0:
-                    return details.getName();
-                case 1:
-                    return details.getRarity();
-                case 2:
-                    return 0;
-            }
-            return null;
-        }
-
-        @Override
-        public String getColumnName(int column) {
-            return columns[column];
-        }
-    }
     public static void main(String[] args) {
         new userInterface();
+    }
+}
+
+class TablePanel {
+    JPanel panel;
+    JTable table;
+    TableModel model;
+    List<YugiohCardDetails> list;
+    public TablePanel(){
+        panel = new JPanel();
+
+        table = new JTable();
+        list = new ArrayList<>();
+        model = new TableModel(list);
+        JScrollPane scrollPane = new JScrollPane(table);
+        table.setModel(model);
+        panel.add(scrollPane, BorderLayout.WEST);
+    }
+
+    public JPanel getPanel() {
+        return panel;
+    }
+}
+
+class TableModel extends AbstractTableModel{
+    String[] columns = {"Set", "Name", "Rarity", "Price", "Quantity"};
+    List<YugiohCardDetails> currentList;
+    TableModel(List<YugiohCardDetails> list){
+        currentList = list;
+
+    }
+
+    @Override
+    public int getRowCount() {
+        return currentList.size();
+    }
+
+    @Override
+    public int getColumnCount() {
+        return columns.length;
+    }
+
+    @Override
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        YugiohCardDetails details = currentList.get(rowIndex);
+        switch (columnIndex){
+            case 0:
+                return details.getName();
+            case 1:
+                return details.getRarity();
+            case 2:
+                return 0;
+        }
+        return null;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        return columns[column];
     }
 }
