@@ -56,7 +56,7 @@ class rarityModel extends AbstractTableModel {
                 size = parent.getData().getList().indexOf(detail);
             }
         }
-        return parent.getData().getList().get(size).getRarity().size();
+        return parent.getData().getList().get(size).getSet().size();
     }
 
     @Override
@@ -69,10 +69,10 @@ class rarityModel extends AbstractTableModel {
         List<String> d = new ArrayList<>();
         for (YugiohCardDetails detail : parent.getData().getList()){
             if (detail.getName().equals(list.getSelectedValue())){
-                d = detail.getRarity();
+                d = detail.getSet();
             }
         }
-        List<String> details = parent.getData().getList().get(list.getSelectedIndex()).getRarity();
+        List<String> details = parent.getData().getList().get(list.getSelectedIndex()).getSet();
         switch (columnIndex){
             case 0:
                 String nameSet = d.get(rowIndex);

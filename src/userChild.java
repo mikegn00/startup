@@ -6,6 +6,8 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class userChild extends JDialog {
@@ -15,21 +17,38 @@ public class userChild extends JDialog {
     userInterface parent;
     String[] textName;
     namingPanel namePane;
+    YugiohCardDetails detail;
     public userChild(userInterface parent){
         setTitle("Add card");
 //        name = new namePanel(parent.getData());
         this.parent = parent;
         initial();
         setLayout(new BorderLayout());
+
+        JPanel panel = new JPanel();
         namePane = new namingPanel(parent);
         rarity = new rarityPanel(parent, namePane.getjList());
         namePane.updateTable(rarity.getModel());
+        JButton button = new JButton("Submit");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String name = namePane.getjList().getSelectedValue();
+                String set_code = rarity.getModel().getValueAt(rarity.getTable().getSelectedRow(), 0).toString()+"_"+rarity.getModel().getValueAt(rarity.getTable().getSelectedRow(), 1);
+                detail = new YugiohCardDetails(name, " ", Arrays.asList(set_code));
+                parent.updateTablePanel(detail);
+            }
+        });
+        panel.add(namePane.getPanel(), BorderLayout.NORTH);
+        panel.add(rarity.getPanel(), BorderLayout.SOUTH);
 //        setLayout(new GridLayout(3,1));
 //        name.setPanel(rarity.getModel());
         add(searchPanel(), BorderLayout.NORTH);
 //        add(name.getPanel(), BorderLayout.CENTER);
-        add(namePane.getPanel(), BorderLayout.SOUTH);
-        add(rarity.getPanel(), BorderLayout.CENTER);
+        add(panel, BorderLayout.CENTER);
+        add(button, BorderLayout.SOUTH);
+
+//        add(rarity.getPanel(), BorderLayout.CENTER);
         setVisible(true);
         setSize(500,500);
 

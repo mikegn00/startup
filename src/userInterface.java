@@ -1,6 +1,5 @@
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +11,7 @@ public class userInterface extends JFrame {
     userInterface parent;
     List<YugiohCardDetails> currentList;
     TablePanel tablePanel;
+    userChild child;
 
     userInterface(){
         super("Yugi");
@@ -40,7 +40,7 @@ public class userInterface extends JFrame {
         addItems.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                userChild child = new userChild(parent);
+                child = new userChild(parent);
 
             }
         });
@@ -54,6 +54,10 @@ public class userInterface extends JFrame {
         panel.add(checkPrice);
         panel.add(saveCollection);
         return panel;
+    }
+    void updateTablePanel(YugiohCardDetails details){
+        tablePanel.updateTable(details);
+        child.dispose();
     }
 
 
@@ -82,6 +86,9 @@ class TablePanel {
     public JPanel getPanel() {
         return panel;
     }
+    void updateTable(YugiohCardDetails details){
+        model.updateTable(details);
+    }
 }
 
 class TableModel extends AbstractTableModel{
@@ -90,6 +97,10 @@ class TableModel extends AbstractTableModel{
     TableModel(List<YugiohCardDetails> list){
         currentList = list;
 
+    }
+    void updateTable(YugiohCardDetails detail){
+        currentList.add(detail);
+        this.fireTableDataChanged();
     }
 
     @Override
@@ -107,10 +118,20 @@ class TableModel extends AbstractTableModel{
         YugiohCardDetails details = currentList.get(rowIndex);
         switch (columnIndex){
             case 0:
-                return details.getName();
+                for (int n = 0; n < details.getSet().get.length(); n++){
+                    if (nameSet.charAt(n) ==  '_'){
+                        return nameSet.substring(0, n);
+                    }
+
+                }
+                return details.getSet();
             case 1:
-                return details.getRarity();
+                return details.getName();
             case 2:
+                return 0;
+            case 3:
+                return "£0.00";
+            case 4:
                 return 0;
         }
         return null;
