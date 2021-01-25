@@ -18,6 +18,7 @@ public class userChild extends JDialog {
     String[] textName;
     namingPanel namePane;
     YugiohCardDetails detail;
+    ButtonChildPanel buttonChildPanel;
     public userChild(userInterface parent){
         setTitle("Add card");
 //        name = new namePanel(parent.getData());
@@ -28,6 +29,12 @@ public class userChild extends JDialog {
         JPanel panel = new JPanel();
         namePane = new namingPanel(parent);
         rarity = new rarityPanel(parent, namePane.getjList());
+
+        buttonChildPanel = new ButtonChildPanel();
+        buttonChildPanel.setName(namePane);
+        buttonChildPanel.setRare(rarity);
+        buttonChildPanel.setParent(parent);
+
         namePane.updateTable(rarity.getModel());
         JButton button = new JButton("Submit");
         button.addActionListener(new ActionListener() {
@@ -46,7 +53,7 @@ public class userChild extends JDialog {
         add(searchPanel(), BorderLayout.NORTH);
 //        add(name.getPanel(), BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
-        add(button, BorderLayout.SOUTH);
+        add(buttonChildPanel.getPanel(), BorderLayout.SOUTH);
 
 //        add(rarity.getPanel(), BorderLayout.CENTER);
         setVisible(true);

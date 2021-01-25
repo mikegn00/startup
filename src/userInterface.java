@@ -22,9 +22,9 @@ public class userInterface extends JFrame {
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch (Exception e){}
-        add(buttonPanel(), BorderLayout.EAST);
+        add(buttonPanel(), BorderLayout.CENTER);
         add(tablePanel.getPanel(), BorderLayout.WEST);
-        setSize(700, 500);
+        setSize(1000, 1000);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -76,11 +76,21 @@ class TablePanel {
         panel = new JPanel();
 
         table = new JTable();
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         list = new ArrayList<>();
         model = new TableModel(list);
         JScrollPane scrollPane = new JScrollPane(table);
         table.setModel(model);
+//        table.setSize(new Dimension(800, 900));
+        scrollPane.setPreferredSize(new Dimension(800, 800));
+        table.getColumnModel().getColumn(0).setPreferredWidth(70); //column Set
+        table.getColumnModel().getColumn(1).setPreferredWidth(300); //column Name
+        table.getColumnModel().getColumn(2).setPreferredWidth(250); //column Rarity
+        table.getColumnModel().getColumn(3).setPreferredWidth(50); //column Rarity
+        table.getColumnModel().getColumn(4).setPreferredWidth(50); //column Rarity
+
         panel.add(scrollPane, BorderLayout.WEST);
+//        panel.setSize(800, 800);
     }
 
     public JPanel getPanel() {
@@ -103,6 +113,7 @@ class TableModel extends AbstractTableModel{
         this.fireTableDataChanged();
     }
 
+
     @Override
     public int getRowCount() {
         return currentList.size();
@@ -118,21 +129,27 @@ class TableModel extends AbstractTableModel{
         YugiohCardDetails details = currentList.get(rowIndex);
         switch (columnIndex){
             case 0:
-                for (int n = 0; n < details.getSet().get.length(); n++){
-                    if (nameSet.charAt(n) ==  '_'){
-                        return nameSet.substring(0, n);
+                String set_name = details.getSet().get(0);
+                for (int n = 0; n < set_name.length(); n++){
+                    if (set_name.charAt(n) ==  '_'){
+                        return set_name.substring(0, n);
                     }
-
                 }
                 return details.getSet();
             case 1:
                 return details.getName();
             case 2:
+                String set_rarity = details.getSet().get(0);
+                for (int n = 0; n < set_rarity.length(); n++){
+                    if (set_rarity.charAt(n) == '_'){
+                        return set_rarity.substring(n+1);
+                    }
+                }
                 return 0;
             case 3:
                 return "£0.00";
             case 4:
-                return 0;
+                return details.getCount();
         }
         return null;
     }
