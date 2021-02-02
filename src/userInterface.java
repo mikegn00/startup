@@ -12,6 +12,7 @@ public class userInterface extends JFrame {
     List<YugiohCardDetails> currentList;
     TablePanel tablePanel;
     userChild child;
+    CollectionTablePanel collectionTablePanel;
 
     userInterface(){
         super("Yugi");
@@ -19,11 +20,13 @@ public class userInterface extends JFrame {
         this.parent = this;
         this.tablePanel = new TablePanel();
         this.currentList = new ArrayList<>();
+        this.collectionTablePanel = new CollectionTablePanel(this);
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         }catch (Exception e){}
         add(buttonPanel(), BorderLayout.CENTER);
         add(tablePanel.getPanel(), BorderLayout.WEST);
+        add(collectionTablePanel.getPanel(), BorderLayout.EAST);
         setSize(1000, 1000);
         setVisible(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -57,6 +60,10 @@ public class userInterface extends JFrame {
     }
     void updateTablePanel(YugiohCardDetails details){
         tablePanel.updateTable(details);
+        child.dispose();
+    }
+    void updateCollectionPanel(YugiohCardDetails details){
+        collectionTablePanel.updateModel(details);
         child.dispose();
     }
 

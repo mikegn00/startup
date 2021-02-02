@@ -27,6 +27,15 @@ public class ButtonChildPanel {
                 parent.updateTablePanel(detail);
             }
         });
+        butBag.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String nameString = name.getjList().getSelectedValue();
+                String set_code = rare.getModel().getValueAt(rare.getTable().getSelectedRow(), 0).toString()+"_"+rare.getModel().getValueAt(rare.getTable().getSelectedRow(), 1);
+                YugiohCardDetails detail = new YugiohCardDetails(nameString, " ", Arrays.asList(set_code));
+                parent.updateCollectionPanel(detail);
+            }
+        });
     }
 
     public JPanel getPanel() {

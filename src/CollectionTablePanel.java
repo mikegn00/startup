@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,10 @@ public class CollectionTablePanel {
         list = new ArrayList<>();
         table = new JTable();
         model = new TableModelCollection(list);
+        JScrollPane scrollPane = new JScrollPane(table);
+        table.setModel(model);
+        scrollPane.setPreferredSize(new Dimension(800, 800));
+        panel.add(scrollPane, BorderLayout.EAST);
     }
 
     void updateModel(YugiohCardDetails details){
@@ -37,7 +42,20 @@ class TableModelCollection extends AbstractTableModel {
     }
 
     void updateTable(YugiohCardDetails details){
-        temp.add(details);
+        boolean found = false;
+        if(!temp.isEmpty()) {
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).sets.get(0).equals(details.getSet().get(0))) {
+                    temp.get(i).plus();
+                    found = true;
+                }
+
+            }
+        }
+        if (!found){
+            details.plus();
+            temp.add(details);
+        }
         this.fireTableDataChanged();
     }
 
@@ -77,5 +95,10 @@ class TableModelCollection extends AbstractTableModel {
                 return details.getCount();
         }
         return null;
+    }
+
+    @Override
+    public String getColumnName(int column) {
+        return columns[column];
     }
 }
